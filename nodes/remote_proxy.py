@@ -8,10 +8,9 @@ RemoteComfyUIExecutor - 远程 ComfyUI 执行节点。
 import json
 import logging
 import os
-
 import torch
 
-from ..remote_executor import (
+from .remote_executor import (
     RemoteComfyUIClient,
     RemoteComfyUIError,
     apply_template_params,
