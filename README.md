@@ -1,60 +1,60 @@
 # ComfyUI-RemoteProxy
 
-将图片生成任务转发到远程 ComfyUI 服务器执行的代理节点。适用于本地 GPU 算力不足、需要利用远程 GPU 服务器的场景。
+A ComfyUI proxy node that acts as a bridge to forward image generation tasks to a remote ComfyUI server. This is an ideal solution for scenarios where local GPU computing power is insufficient and you want to leverage a more powerful remote GPU server seamlessly within your local workflow.
 
-## 安装
+## Installation
 
-1. 将 `ComfyUI-RemoteProxy` 目录放入 ComfyUI 的 `custom_nodes/` 目录
-2. 安装依赖：
+1. Place the `ComfyUI-RemoteProxy` directory into your ComfyUI's `custom_nodes/` folder.
+2. Install the required Python dependencies:
    ```bash
    pip install websocket-client
    ```
-3. 重启 ComfyUI
+3. Restart ComfyUI.
 
-## 使用方法
+## Usage Guide
 
-### 基础用法（使用内置模板）
+### Basic Usage (Using Built-in Templates)
 
-1. 在节点菜单中找到 **Remote → Remote ComfyUI Executor**
-2. 输入远程服务器地址（如 `http://192.168.1.100:8188`）
-3. 选择 `default_txt2img` 模板
-4. 填写 prompt、尺寸等参数
-5. 执行
+1. Locate the node in the ComfyUI node menu under **Remote → Remote ComfyUI Executor**.
+2. Enter the address of your remote ComfyUI server (e.g., `http://192.168.1.100:8188`).
+3. Select the `default_txt2img` template from the dropdown menu.
+4. Fill in the desired parameters such as prompts, width, and height.
+5. Execute the queue.
 
-### 使用自定义 Workflow
+### Using Custom Workflows
 
-1. 在远程 ComfyUI 中设计好 workflow
-2. **File → Export (API)** 导出 workflow JSON
-3. 在节点中选择 `custom` 模板
-4. 将导出的 JSON 粘贴到 `custom_workflow` 输入框
-5. 在 JSON 中使用占位符标记可替换参数：
-   - `{{positive_prompt}}` - 正向提示词
-   - `{{negative_prompt}}` - 负向提示词
-   - `{{seed}}` - 随机种子
-   - `{{width}}` / `{{height}}` - 图片尺寸
-   - `{{input_image}}` - 上传的输入图片文件名
+1. Design your desired workflow over on the remote ComfyUI instance.
+2. Save it by clicking **File → Export (API)** to download the workflow JSON.
+3. In your local ComfyUI, select the `custom` template on the `Remote ComfyUI Executor` node.
+4. Paste the exported JSON content into the `custom_workflow` text box.
+5. In your JSON text, use the following placeholder syntax to denote parameters that should be dynamically replaced during execution:
+   - `{{positive_prompt}}` - Positive prompt
+   - `{{negative_prompt}}` - Negative prompt
+   - `{{seed}}` - Random seed
+   - `{{width}}` / `{{height}}` - Image resolution dimensions
+   - `{{input_image}}` - The filename of the uploaded input image (for img2img workflows)
 
-### 创建自定义模板
+### Creating Custom Built-in Templates
 
-将 workflow JSON 文件放入 `workflows/` 目录即可自动识别为内置模板选项。
+You can create your own reusable templates by placing any valid ComfyUI API workflow JSON file into the `workflows/` directory. It will automatically be detected and become selectable from the node's template dropdown menu upon restart.
 
-## 节点参数
+## Node Parameters
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| server_url | STRING | 远程 ComfyUI 地址 |
-| template | COMBO | workflow 模板选择 |
-| positive_prompt | STRING | 正向提示词 |
-| negative_prompt | STRING | 负向提示词 |
-| seed | INT | 随机种子 |
-| width | INT | 图片宽度 |
-| height | INT | 图片高度 |
-| timeout | INT | 超时秒数 (默认 300) |
-| custom_workflow | STRING | 自定义 workflow JSON |
-| input_images | IMAGE | 输入图片 (可选，用于 img2img) |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| server_url | STRING | The URL of the remote ComfyUI server. |
+| template | COMBO | The workflow template to execute. |
+| positive_prompt | STRING | The positive text prompt. |
+| negative_prompt | STRING | The negative text prompt. |
+| seed | INT | Random seed for generation. |
+| width | INT | Image width in pixels. |
+| height | INT | Image height in pixels. |
+| timeout | INT | Execution timeout in seconds (default: 300). |
+| custom_workflow | STRING | Custom workflow JSON (used when template is set to 'custom'). |
+| input_images | IMAGE | Input images (Optional, used for img2img pipelines). |
 
-## 注意事项
+## Important Notes
 
-- 确保远程 ComfyUI 服务器已启动且可访问
-- 默认模板使用 `v1-5-pruned-emaonly.safetensors`，请根据实际模型修改模板
-- img2img 时图片会自动上传到远程服务器的 input 目录
+- Ensure the remote ComfyUI server is running and accessible from your local network.
+- The `default_txt2img` template defaults to using the `v1-5-pruned-emaonly.safetensors` model. Please modify the template or use a custom JSON if you need to use a different checkpoint.
+- During img2img operations, input images are automatically uploaded to the remote server's `input` directory prior to execution.

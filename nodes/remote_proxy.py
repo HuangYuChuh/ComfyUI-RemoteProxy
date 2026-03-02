@@ -11,7 +11,7 @@ import os
 
 import torch
 
-from .remote_executor import (
+from ..remote_executor import (
     RemoteComfyUIClient,
     RemoteComfyUIError,
     apply_template_params,
@@ -20,7 +20,7 @@ from .remote_executor import (
 logger = logging.getLogger(__name__)
 
 # 内置 workflow 模板目录
-WORKFLOWS_DIR = os.path.join(os.path.dirname(__file__), "workflows")
+WORKFLOWS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "workflows")
 
 
 def _get_builtin_templates() -> list[str]:
